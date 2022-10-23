@@ -13,6 +13,9 @@ from sklearn.ensemble import RandomForestClassifier
 # pip3 install python-binance
 from binance.client import Client
 
+# pip3 install bottle
+from bottle import route, run, template
+
 modelX = None
 scalerX = None
 trained = False
@@ -75,10 +78,34 @@ def predict():
     
     prediction = modelX.predict(X)[0]
     if prediction == 0:
-        print("Prediction : Down ")
+        # print("Prediction : Down ")
+        return 'down'
     else:
-        print("Prediction : Up ")
+        # print("Prediction : Up ")
+        return 'up'
 
-train()
+# train()
+# predict()
 
-predict()
+@route('/hello/<name>')
+def index(name):
+    return template('<b>Hello {{name}}</b>!', name=name)
+
+@route('/train-and-predict')
+def get_train_and_predict():
+    train()
+    result = predict()
+    return result
+
+@route('/train')
+def get_train():
+    train()
+    return 'OK'
+
+@route('/predict')
+def get_predict():
+    result = predict()
+    return result
+
+
+run(host='localhost', port=8182)
